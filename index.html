@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ANTIAGE Clinic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-dark: #1a1a1a;
+            --primary: #2d2d2d;
+            --accent-gold: #c9a96e;
+            --accent-light: #e8d5b7;
+            --bg-cream: #faf8f5;
+            --bg-white: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-gray: #666666;
+            --text-light: #999999;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-cream) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease, visibility 0.6s;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-bottom: 30px;
+            animation: fadeInScale 1s ease-out;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(201, 169, 110, 0.2);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, rgba(26,26,26,0.9) 0%, rgba(45,45,45,0.8) 50%, rgba(26,26,26,0.85) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(201, 169, 110, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(201, 169, 110, 0.08) 0%, transparent 40%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .hero-content {
+            max-width: 700px;
+            z-index: 2;
+            padding: 20px 0;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 7vw, 3.2rem);
+            color: var(--bg-white);
+            margin-bottom: 25px;
+            font-weight: 500;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 18px 36px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-gold) 0%, #d4b87a 100%);
+            color: var(--bg-white);
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.4),
+                        0 0 0 0 rgba(201, 169, 110, 0.4);
+            animation: pulse-gold 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% {
+                box-shadow: 0 8px 30px rgba(201, 169, 110, 0.4),
+                            0 0 0 0 rgba(201, 169, 110, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 30px rgba(201, 169, 110, 0.6),
+                            0 0 0 10px rgba(201, 169, 110, 0);
+            }
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 15px rgba(201, 169, 110, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--bg-white);
+            border: 2px solid rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--bg-white);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .stats {
+            background: var(--bg-white);
+            padding: 60px 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 100%;
+            position: relative;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-light), transparent);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 10px;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, var(--accent-light), transparent);
+        }
+
+        .stat-item:last-child::after {
+            display: none;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent-gold), #d4b87a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            opacity: 0.8;
+            line-height: 1.4;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .founder {
+            background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .founder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(180deg, rgba(201, 169, 110, 0.05), transparent);
+        }
+
+        .founder-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+            align-items: center;
+            position: relative;
+        }
+
+        .founder-photo {
+            width: 220px;
+            height: 220px;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 60px rgba(201, 169, 110, 0.3),
+                        0 0 0 10px rgba(201, 169, 110, 0.1);
+            flex-shrink: 0;
+            position: relative;
+            transition: transform 0.4s ease;
+        }
+
+        .founder-photo::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-light));
+            z-index: -1;
+            opacity: 0.5;
+            animation: rotate-border 8s linear infinite;
+        }
+
+        @keyframes rotate-border {
+            to { transform: rotate(360deg); }
+        }
+
+        .founder-photo:active {
+            transform: scale(1.05);
+        }
+
+        .photo-placeholder {
+            font-size: 5rem;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+        }
+
+        .founder-info {
+            text-align: center;
+        }
+
+        .founder-info h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .founder-info .position {
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .founder-info .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            line-height: 1.7;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .founder-info .quote::before,
+        .founder-info .quote::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--accent-light);
+            position: absolute;
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+        }
+
+        .founder-info .quote::before {
+            top: -10px;
+            left: -5px;
+        }
+
+        .founder-info .quote::after {
+            bottom: -20px;
+            right: -5px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 45px;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .section-header h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-light));
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        .link-arrow {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .link-arrow:active {
+            transform: translateX(5px);
+            color: var(--accent-light);
+        }
+
+        .directions {
+            background: var(--bg-white);
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .directions-grid {
+            max-width: 600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .direction-card {
+            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            padding: 30px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(201, 169, 110, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .direction-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .direction-card:active::before {
+            left: 100%;
+        }
+
+        .direction-card:active {
+            transform: scale(0.96);
+            box-shadow: 0 10px 30px rgba(201, 169, 110, 0.2);
+        }
+
+        .direction-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .direction-card:active .direction-icon {
+            transform: scale(1.2);
+        }
+
+        .direction-card h3 {
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .direction-card p {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .procedures {
+            background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            padding: 80px 0;
+        }
+
+        .procedures-slider {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0;
+        }
+
+        .procedures-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .procedures-track {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .procedure-card {
+            min-width: 300px;
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 30px;
+            scroll-snap-align: start;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(201, 169, 110, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .procedure-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-light));
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .procedure-card:active::after {
+            transform: scaleX(1);
+        }
+
+        .procedure-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(201, 169, 110, 0.15);
+        }
+
+        .procedure-card h3 {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .procedure-card .price {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--accent-gold), #d4b87a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .procedure-card .description {
+            color: var(--text-gray);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .philosophy {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, #3a3a3a 100%);
+            padding: 80px 20px;
+            color: var(--bg-white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(201, 169, 110, 0.1) 0%, transparent 70%);
+            animation: glow 8s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { transform: translate(0, 0); opacity: 0.5; }
+            50% { transform: translate(-20%, 20%); opacity: 0.8; }
+        }
+
+        .philosophy-content {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .philosophy h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .philosophy p {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            margin-bottom: 35px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .specialists {
+            background: var(--bg-white);
+            padding: 80px 20px;
+        }
+
+        .specialists-grid {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .specialist-card {
+            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            gap: 25px;
+            padding: 25px;
+            align-items: center;
+            border: 1px solid rgba(201, 169, 110, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .specialist-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-light));
+            transition: height 0.4s;
+        }
+
+        .specialist-card:active::before {
+            height: 100%;
+        }
+
+        .specialist-card:active {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(201, 169, 110, 0.15);
+        }
+
+        .specialist-photo {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 8px 25px rgba(201, 169, 110, 0.25);
+            transition: transform 0.3s;
+        }
+
+        .specialist-card:active .specialist-photo {
+            transform: scale(1.1);
+        }
+
+        .specialist-info h3 {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .specialist-info .role {
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .specialist-info .experience {
+            color: var(--text-gray);
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
+        .gallery {
+            background: linear-gradient(180deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            padding: 80px 0;
+        }
+
+        .gallery-subtitle {
+            text-align: center;
+            margin-bottom: 35px;
+            color: var(--text-gray);
+            opacity: 0.8;
+            padding: 0 20px;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .gallery-slider {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .gallery-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .gallery-track {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .gallery-item {
+            min-width: 320px;
+            scroll-snap-align: start;
+            background: var(--bg-white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            transition: all 0.4s ease;
+        }
+
+        .gallery-item:active {
+            transform: scale(0.98);
+        }
+
+        .gallery-images {
+            display: flex;
+            height: 220px;
+        }
+
+        .gallery-before, .gallery-after {
+            flex: 1;
+            background: linear-gradient(135deg, var(--accent-light), var(--accent-gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .gallery-before::after, .gallery-after::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+        }
+
+        .gallery-info {
+            padding: 25px;
+        }
+
+        .gallery-info h3 {
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .gallery-info p {
+            color: var(--text-gray);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .reviews {
+            background: var(--bg-white);
+            padding: 80px 20px;
+        }
+
+        .reviews-header {
+            max-width: 600px;
+            margin: 0 auto 50px;
+            text-align: center;
+        }
+
+        .ratings {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 25px;
+        }
+
+        .rating-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .rating-item::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 20%;
+            height: 60%;
+            width: 1px;
+            background: linear-gradient(180deg, transparent, var(--accent-light), transparent);
+        }
+
+        .rating-item:last-child::after {
+            display: none;
+        }
+
+        .rating-score {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            background: linear-gradient(135deg, var(--accent-gold), #d4b87a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .rating-source {
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            opacity: 0.7;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .reviews-grid {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .review-card {
+            background: linear-gradient(135deg, var(--bg-cream) 0%, var(--bg-white) 100%);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(201, 169, 110, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .review-card::before {
+            content: '"';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 4rem;
+            color: var(--accent-light);
+            opacity: 0.3;
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+        }
+
+        .review-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(201, 169, 110, 0.15);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .review-date {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .review-text {
+            font-style: italic;
+            line-height: 1.8;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        .certificates {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent-gold) 50%, #d4b87a 100%);
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .certificates::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: shimmer 6s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        .certificates h2 {
+            color: var(--primary-dark);
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 18px;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+
+        .certificates p {
+            color: var(--primary-dark);
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .booking {
+            background: linear-gradient(180deg, var(--bg-white) 0%, var(--bg-cream) 100%);
+            padding: 80px 20px;
+        }
+
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            padding: 35px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border: 1px solid rgba(201, 169, 110, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid rgba(201, 169, 110, 0.2);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-cream);
+            transition: all 0.3s;
+            color: var(--text-dark);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            background: var(--bg-white);
+            box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .footer {
+            background: var(--primary-dark);
+            color: var(--bg-white);
+            padding: 50px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-light), var(--accent-gold));
+        }
+
+        .footer p {
+            opacity: 0.7;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .shimmer-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shimmer-effect::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s;
+        }
+
+        .shimmer-effect:active::before {
+            left: 100%;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                min-height: 90vh;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .stat-item::after {
+                display: none;
+            }
+
+            .directions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .specialist-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .ratings {
+                gap: 25px;
+            }
+
+            .rating-item::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-logo">ANTIAGE</div>
+        <div class="spinner"></div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="animate-slide-up">Косметология, аппаратная медицина и точная диагностика — в одной клинике.</h1>
+            <p class="animate-slide-up delay-200">Ваша молодость – наша забота</p>
+            <div class="hero-buttons animate-slide-up delay-400">
+                <button class="btn btn-primary" onclick="scrollToSection('booking')">Записаться</button>
+                <button class="btn btn-secondary" onclick="scrollToSection('directions')">Услуги</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats animate-on-scroll" data-animate>
+        <div class="stat-item">
+            <div class="stat-number" data-target="128858">0</div>
+            <div class="stat-label">довольных пациентов</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="551">0</div>
+            <div class="stat-label">направлений здоровья и красоты</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="33">0</div>
+            <div class="stat-label">% по рекомендации</div>
+        </div>
+    </section>
+
+    <section class="founder animate-on-scroll" data-animate>
+        <div class="founder-container">
+            <div class="founder-photo">
+                <span class="photo-placeholder">👩‍⚕️</span>
+            </div>
+            <div class="founder-info">
+                <h2>Семенова Алла Вячеславовна</h2>
+                <div class="position">Основатель клиники</div>
+                <div class="quote">Ваша молодость – наша забота</div>
+                <button class="btn btn-primary" onclick="showFounderInfo()">Об основателе</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="directions animate-on-scroll" id="directions" data-animate>
+        <div class="section-header">
+            <h2>Направления клиники</h2>
+            <a href="#" class="link-arrow" onclick="showAllDirections(event)">все →</a>
+        </div>
+        <div class="directions-grid">
+            <div class="direction-card shimmer-effect" onclick="showDirectionDetails('cosmetology')">
+                <div class="direction-icon">💆‍♀️</div>
+                <h3>Косметология</h3>
+                <p>43 процедуры</p>
+            </div>
+            <div class="direction-card shimmer-effect" onclick="showDirectionDetails('massage')">
+                <div class="direction-icon">💪</div>
+                <h3>Аппаратный массаж</h3>
+                <p>6 процедур</p>
+            </div>
+            <div class="direction-card shimmer-effect" onclick="showDirectionDetails('gynecology')">
+                <div class="direction-icon">🏥</div>
+                <h3>Гинекология</h3>
+                <p>16 процедур</p>
+            </div>
+            <div class="direction-card shimmer-effect" onclick="showDirectionDetails('neurology')">
+                <div class="direction-icon">🧠</div>
+                <h3>Невролог</h3>
+                <p>консультация</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="procedures animate-on-scroll" data-animate>
+        <div class="section-header">
+            <h2>Популярные процедуры</h2>
+            <a href="#" class="link-arrow" onclick="showAllProcedures(event)">все →</a>
+        </div>
+        <div class="procedures-slider">
+            <div class="procedures-track">
+                <div class="procedure-card">
+                    <h3>RF лифтинг</h3>
+                    <div class="price">3 200 – 75 000 ₽</div>
+                    <div class="description">Безоперационный RF лифтинг для омоложения кожи</div>
+                </div>
+                <div class="procedure-card">
+                    <h3>LPG Массаж</h3>
+                    <div class="price">от 1 000 ₽</div>
+                    <div class="description">Аппаратный лимфодренажный массаж тела</div>
+                </div>
+                <div class="procedure-card">
+                    <h3>SMAS-лифтинг</h3>
+                    <div class="price">100 ₽ / линия</div>
+                    <div class="description">Ультразвуковой Ultraformer для подтяжки</div>
+                </div>
+                <div class="procedure-card">
+                    <h3>Лазерное омоложение</h3>
+                    <div class="price">от 3 300 ₽</div>
+                    <div class="description">Инновационная лазерная терапия кожи</div>
+                </div>
+                <div class="procedure-card">
+                    <h3>Фотоомоложение</h3>
+                    <div class="price">от 3 200 ₽</div>
+                    <div class="description">Световая терапия для rejuvenation кожи</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="philosophy animate-on-scroll" data-animate>
+        <div class="philosophy-content">
+            <h2>Красота изнутри</h2>
+            <p>Клиника антивозрастной медицины ANTIAGE — это не просто новый подход к красоте. Это целая философия, направленная на красоту изнутри, долговременный результат и индивидуальный подход.</p>
+            <button class="btn btn-primary" onclick="showAboutUs()">Больше о нас</button>
+        </div>
+    </section>
+
+    <section class="specialists animate-on-scroll" data-animate>
+        <div class="section-header">
+            <h2>Наши специалисты</h2>
+            <a href="#" class="link-arrow" onclick="showAllSpecialists(event)">все 11 →</a>
+        </div>
+        <div class="specialists-grid">
+            <div class="specialist-card">
+                <div class="specialist-photo">
+                    <span class="photo-placeholder">👩‍⚕️</span>
+                </div>
+                <div class="specialist-info">
+                    <h3>Гончарова Ольга Викторовна</h3>
+                    <div class="role">Косметолог-эстетист</div>
+                    <div class="experience">Стаж 16 лет</div>
+                </div>
+            </div>
+            <div class="specialist-card">
+                <div class="specialist-photo">
+                    <span class="photo-placeholder">👩‍⚕️</span>
+                </div>
+                <div class="specialist-info">
+                    <h3>Никонова Наталья Руслановна</h3>
+                    <div class="role">Косметолог</div>
+                    <div class="experience">Стаж 6 лет</div>
+                </div>
+            </div>
+            <div class="specialist-card">
+                <div class="specialist-photo">
+                    <span class="photo-placeholder">👩‍⚕️</span>
+                </div>
+                <div class="specialist-info">
+                    <h3>Плюто Татьяна Юрьевна</h3>
+                    <div class="role">Косметолог, дерматолог</div>
+                    <div class="experience">Стаж 23 года</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery animate-on-scroll" data-animate>
+        <div class="section-header">
+            <h2>До и после</h2>
+            <a href="#" class="link-arrow" onclick="showAllGallery(event)">все 55 →</a>
+        </div>
+        <p class="gallery-subtitle">Реальные работы наших врачей — без ретуши и обещаний.</p>
+        <div class="gallery-slider">
+            <div class="gallery-track">
+                <div class="gallery-item">
+                    <div class="gallery-images">
+                        <div class="gallery-before" data-label="До">
+                            <span class="photo-placeholder">📷</span>
+                        </div>
+                        <div class="gallery-after" data-label="После">
+                            <span class="photo-placeholder">✨</span>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Фотоомоложение</h3>
+                        <p>Залозная Марина Васильевна</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-images">
+                        <div class="gallery-before" data-label="До">
+                            <span class="photo-placeholder">📷</span>
+                        </div>
+                        <div class="gallery-after" data-label="После">
+                            <span class="photo-placeholder">✨</span>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Ботулинотерапия</h3>
+                        <p>Залозная Марина Васильевна</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-images">
+                        <div class="gallery-before" data-label="До">
+                            <span class="photo-placeholder">📷</span>
+                        </div>
+                        <div class="gallery-after" data-label="После">
+                            <span class="photo-placeholder">✨</span>
+                        </div>
+                    </div>
+                    <div class="gallery-info">
+                        <h3>Контурная пластика</h3>
+                        <p>Залозная Марина Васильевна</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="reviews animate-on-scroll" data-animate>
+        <div class="reviews-header">
+            <h2>Что говорят о нас</h2>
+            <a href="#" class="link-arrow" onclick="showAllReviews(event)">все 216 →</a>
+            <div class="ratings">
+                <div class="rating-item">
+                    <div class="rating-score">4.9</div>
+                    <div class="rating-source">2ГИС</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-score">4.8</div>
+                    <div class="rating-source">Продокторов</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-score">5.0</div>
+                    <div class="rating-source">Яндекс</div>
+                </div>
+            </div>
+        </div>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Злата</span>
+                    <span class="review-date">10.03.2026</span>
+                </div>
+                <div class="review-text">
+                    Хочу выразить благодарность за отлично проведенный термолифтинг. Процедура избавила меня от частых походов к косметологу. Кожа подтянутая, напитанная, нет морщин.
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Мария</span>
+                    <span class="review-date">05.03.2026</span>
+                </div>
+                <div class="review-text">
+                    Отличная клиника! Профессиональные врачи, современное оборудование. Делала RF-лифтинг, результат превзошел ожидания. Рекомендую всем!
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-author">Елена</span>
+                    <span class="review-date">28.02.2026</span>
+                </div>
+                <div class="review-text">
+                    Хожу в эту клинику уже 2 года. Всегда отличный сервис, внимательный персонал. LPG-массаж просто чудо!
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="certificates animate-on-scroll" data-animate>
+        <h2>Подарочные сертификаты</h2>
+        <p>на сумму от 5000 рублей. Приобрести можно в клинике или заказать доставку</p>
+        <button class="btn btn-primary" onclick="orderCertificate()">Заказать сертификат</button>
+    </section>
+
+    <section class="booking animate-on-scroll" id="booking" data-animate>
+        <div class="section-header">
+            <h2>Записаться на приём</h2>
+        </div>
+        <form class="booking-form" id="bookingForm" onsubmit="handleBooking(event)">
+            <div class="form-group">
+                <label for="name">Ваше имя</label>
+                <input type="text" id="name" required placeholder="Введите ваше имя">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон</label>
+                <input type="tel" id="phone" required placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="form-group">
+                <label for="service">Выберите услугу</label>
+                <select id="service" required>
+                    <option value="">Выберите направление</option>
+                    <option value="cosmetology">Косметология</option>
+                    <option value="massage">Аппаратный массаж</option>
+                    <option value="gynecology">Гинекология</option>
+                    <option value="neurology">Невролог</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Желаемая дата</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label for="comment">Комментарий</label>
+                <textarea id="comment" placeholder="Дополнительная информация"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Отправить заявку</button>
+        </form>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 ANTIAGE Clinic</p>
+        <p>Калининград, ул. Северная, 14</p>
+        <p>Тел: +7 (XXX) XXX-XX-XX</p>
+    </footer>
+
+    <script>
+        function getElementById(id) { return document.getElementById(id); }
+        function addClass(el, cls) { if (el && !el.classList.contains(cls)) el.classList.add(cls); }
+        function removeClass(el, cls) { if (el && el.classList.contains(cls)) el.classList.remove(cls); }
+
+        function formatDate(date) {
+            var d = new Date(date);
+            return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+        }
+
+        function getCurrentDateForInput() {
+            var t = new Date();
+            return t.getFullYear() + '-' + String(t.getMonth()+1).padStart(2,'0') + '-' + String(t.getDate()).padStart(2,'0');
+        }
+
+        function setMinDateToToday(input) { if (input) input.min = getCurrentDateForInput(); }
+
+        function formatPhoneNumber(value) {
+            var n = value.replace(/\D/g, '');
+            if (n.length > 0 && (n[0]==='8' || n[0]==='7')) n = n.substring(1);
+            n = n.substring(0, 10);
+            var f = '+7';
+            if (n.length > 0) f += ' (' + n.substring(0,3);
+            if (n.length >= 3) f += ') ' + n.substring(3,6);
+            if (n.length >= 6) f += '-' + n.substring(6,8);
+            if (n.length >= 8) f += '-' + n.substring(8,10);
+            return f;
+        }
+
+        function validatePhoneNumber(phone) {
+            var c = phone.replace(/\D/g, '');
+            return c.length === 11 && (c.startsWith('7') || c.startsWith('8'));
+        }
+
+        function saveToLocalStorage(key, data) { try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {} }
+        function getFromLocalStorage(key) { try { var d = localStorage.getItem(key); return d ? JSON.parse(d) : null; } catch(e) { return null; } }
+
+        function smoothScrollTo(target, offset) {
+            offset = offset || 0;
+            var el = typeof target === 'string' ? document.querySelector(target) : target;
+            if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - offset, behavior: 'smooth' });
+        }
+
+        function showLoading() { var l = getElementById('loading'); if (l) removeClass(l, 'hidden'); }
+        function hideLoading() { var l = getElementById('loading'); if (l) setTimeout(function(){ addClass(l, 'hidden'); }, 800); }
+
+        function log(msg, data) {
+            var ts = new Date().toLocaleTimeString();
+            if (data !== undefined) console.log('['+ts+'] [ANTIAGE] '+msg, data);
+            else console.log('['+ts+'] [ANTIAGE] '+msg);
+        }
+
+        var tg = null;
+        var isTelegramApp = false;
+
+        function initTelegramWebApp() {
+            try {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    tg = window.Telegram.WebApp;
+                    isTelegramApp = true;
+                    tg.expand();
+                    tg.ready();
+                    if (tg.initDataUnsafe && tg.initDataUnsafe.user) saveToLocalStorage('tg_user', tg.initDataUnsafe.user);
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function showBackButton() { if (tg && tg.BackButton) tg.BackButton.show(); }
+        function sendDataToBot(data) {
+            if (tg) { try { tg.sendData(typeof data==='string' ? data : JSON.stringify(data)); } catch(e) {} }
+        }
+
+        function showTelegramAlert(msg, cb) {
+            if (tg) tg.showAlert(msg, function(){ if(cb) cb(); });
+            else { alert(msg); if(cb) cb(); }
+        }
+
+        function showTelegramConfirm(msg, onYes, onNo) {
+            if (tg) tg.showConfirm(msg, function(ok){ if(ok && onYes) onYes(); else if(!ok && onNo) onNo(); });
+            else { if(confirm(msg) && onYes) onYes(); else if(onNo) onNo(); }
+        }
+
+        function hapticFeedback(type) {
+            if (tg && tg.HapticFeedback) {
+                if (type==='success') tg.HapticFeedback.notificationOccurred('success');
+                else tg.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        function initScrollAnimations() {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        addClass(entry.target, 'visible');
+                        if (entry.target.classList.contains('stats')) animateNumbers();
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('[data-animate], .animate-on-scroll').forEach(function(el) {
+                observer.observe(el);
+            });
+        }
+
+        function animateNumbers() {
+            document.querySelectorAll('.stat-number').forEach(function(counter) {
+                var target = parseInt(counter.getAttribute('data-target'));
+                if (counter.dataset.animated === 'true') return;
+                counter.dataset.animated = 'true';
+                var duration = 2500, startTime = performance.now();
+                function update(now) {
+                    var p = Math.min((now - startTime) / duration, 1);
+                    var ease = 1 - Math.pow(1 - p, 4);
+                    counter.textContent = '+' + Math.floor(ease * target).toLocaleString('ru-RU');
+                    if (p < 1) requestAnimationFrame(update);
+                    else counter.textContent = '+' + target.toLocaleString('ru-RU');
+                }
+                requestAnimationFrame(update);
+            });
+        }
+
+        function initParallaxEffect() {
+            var hero = document.querySelector('.hero');
+            if (!hero) return;
+            var ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    requestAnimationFrame(function() {
+                        var s = window.scrollY;
+                        if (s < window.innerHeight) {
+                            hero.style.transform = 'translateY(' + (s * 0.3) + 'px)';
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+
+        function scrollToSection(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                if (isTelegramApp && id !== 'booking') showBackButton();
+                smoothScrollTo(el, 80);
+                hapticFeedback('success');
+            }
+        }
+
+        function initSwipeSupport() {
+            var tx = 0;
+            document.querySelectorAll('.procedures-slider, .gallery-track').forEach(function(sl) {
+                sl.addEventListener('touchstart', function(e) { tx = e.changedTouches[0].screenX; }, {passive: true});
+                sl.addEventListener('touchend', function(e) {
+                    var dx = tx - e.changedTouches[0].screenX;
+                    if (Math.abs(dx) > 50) {
+                        sl.scrollBy({ left: dx > 0 ? 300 : -300, behavior: 'smooth' });
+                        hapticFeedback('success');
+                    }
+                }, {passive: true});
+            });
+        }
+
+        function initHoverEffects() {
+            document.querySelectorAll('.direction-card,.procedure-card,.specialist-card,.review-card').forEach(function(c) {
+                c.addEventListener('touchstart', function(){ this.style.transform = 'scale(0.98)'; });
+                c.addEventListener('touchend', function(){ this.style.transform = ''; });
+            });
+        }
+
+        function showFounderInfo() {
+            showTelegramAlert('Семенова Алла Вячеславовна\n\nОснователь клиники ANTIAGE\n\n«Ваша молодость – наша забота»\n\nБолее 15 лет опыта в области антивозрастной медицины и косметологии.');
+            hapticFeedback('success');
+        }
+
+        function showAllDirections(e) { if(e) e.preventDefault(); showTelegramAlert('Все направления:\n\n• Косметология — 43 процедуры\n• Аппаратный массаж — 6 процедур\n• Гинекология — 16 процедур\n• Невролог — консультация'); hapticFeedback('success'); }
+
+        function showDirectionDetails(dir) {
+            var map = {
+                cosmetology: 'Косметология\n\n43 процедуры:\n• RF лифтинг\n• Лазерное омоложение\n• Фотоомоложение\n• Пилинг\n• Мезотерапия\n• Биоревитализация',
+                massage: 'Аппаратный массаж\n\n6 видов:\n• LPG массаж\n• Вакуумный\n• Прессотерапия\n• Кавитация\n• RF массаж\n• Миостимуляция',
+                gynecology: 'Гинекология\n\n16 процедур:\n• Консультация\n• УЗИ\n• Кольпоскопия\n• Плазмотерапия\n• Лечение эрозии\n• Интимное омоложение',
+                neurology: 'Невролог\n\n• Первичная консультация\n• ЭЭГ\n• РЭГ\n• Лечение головных болей\n• Реабилитация'
+            };
+            if (map[dir]) { showTelegramAlert(map[dir]); hapticFeedback('success'); }
+        }
+
+        function showAllProcedures(e) { if(e) e.preventDefault(); showTelegramAlert('Полный список доступен при записи на консультацию'); hapticFeedback('success'); }
+        function showAboutUs() { showTelegramAlert('О клинике ANTIAGE\n\nФилософия красоты изнутри, долговременный результат и индивидуальный подход к каждому пациенту.'); hapticFeedback('success'); }
+        function showAllSpecialists(e) { if(e) e.preventDefault(); showTelegramAlert('11 высококвалифицированных специалистов с опытом работы от 6 до 23 лет'); hapticFeedback('success'); }
+        function showAllGallery(e) { if(e) e.preventDefault(); showTelegramAlert('55 реальных работ наших врачей без ретуши и фотошопа'); hapticFeedback('success'); }
+        function showAllReviews(e) { if(e) e.preventDefault(); showTelegramAlert('216 отзывов от довольных пациентов. Средний рейтинг: 4.9/5'); hapticFeedback('success'); }
+
+        function orderCertificate() {
+            showTelegramConfirm('Подарочные сертификаты от 5000₽\n\nПриобрести можно в клинике или заказать доставку\n\nОставить заявку?', function(){
+                showTelegramAlert('Оставьте заявку в форме ниже');
+                scrollToSection('booking');
+            });
+            hapticFeedback('success');
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            var fd = {
+                name: document.getElementById('name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                service: document.getElementById('service').value,
+                date: document.getElementById('date').value,
+                comment: document.getElementById('comment').value.trim()
+            };
+            
+            if (!fd.name || fd.name.length < 2) { showTelegramAlert('Введите имя (минимум 2 символа)'); return; }
+            if (!validatePhoneNumber(fd.phone)) { showTelegramAlert('Введите корректный номер телефона'); return; }
+            if (!fd.service) { showTelegramAlert('Выберите услугу'); return; }
+            if (!fd.date) { showTelegramAlert('Выберите дату'); return; }
+            if (new Date(fd.date) < new Date(new Date().toDateString())) { showTelegramAlert('Выберите дату сегодня или позже'); return; }
+
+            var sn = {cosmetology:'Косметология',massage:'Аппаратный массаж',gynecology:'Гинекология',neurology:'Невролог'};
+            showTelegramConfirm('Подтверждение записи:\n\nИмя: ' + fd.name + '\nТелефон: ' + fd.phone + '\nУслуга: ' + (sn[fd.service]||fd.service) + '\nДата: ' + formatDate(fd.date) + '\n\nОтправить заявку?', function(){
+                var bookings = getFromLocalStorage('bookings') || [];
+                fd.timestamp = new Date().toISOString();
+                bookings.push(fd);
+                saveToLocalStorage('bookings', bookings);
+                sendDataToBot(fd);
+                showTelegramAlert('✅ Заявка успешно отправлена!\n\nМы свяжемся с вами в ближайшее время для подтверждения.', function(){
+                    document.getElementById('bookingForm').reset();
+                    setMinDateToToday(document.getElementById('date'));
+                });
+                hapticFeedback('success');
+                log('Booking submitted', fd);
+            });
+        }
+
+        function initPhoneFormatting() {
+            var p = document.getElementById('phone');
+            if (p) p.addEventListener('input', function(){ this.value = formatPhoneNumber(this.value); });
+        }
+
+        function initApp() {
+            log('Initializing app...');
+            initPhoneFormatting();
+            var di = document.getElementById('date');
+            if (di) setMinDateToToday(di);
+            initTelegramWebApp();
+            initScrollAnimations();
+            initParallaxEffect();
+            initSwipeSupport();
+            initHoverEffects();
+            window.addEventListener('load', hideLoading);
+            setTimeout(hideLoading, 3000);
+            log('App initialized successfully');
+        }
+
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initApp);
+        else initApp();
+    </script>
+</body>
+</html>
